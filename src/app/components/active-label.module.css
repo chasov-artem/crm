@@ -1,0 +1,11 @@
+.label {
+border: 1px solid #000;
+border-radius: 28px;
+padding: 4px 14px;
+width: 83px;
+height: 28px;
+background-color: #dcfce7;
+display: inline-flex;
+align-items: center;
+color: #15803D;
+}
