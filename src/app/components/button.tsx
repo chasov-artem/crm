@@ -1,24 +1,22 @@
 'use client';
 
 import React from 'react';
+import clsx from 'clsx';
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   disabled?: boolean;
 }
 
-export default function Button({
-  disabled,
-  children,
-  ...rest
-}: ButtonProps) {
+export default function Button({ disabled, ...rest }: ButtonProps) {
   return (
     <button
       {...rest}
-      disabled={disabled}
-      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-    >
-      {children}
-    </button>
+      className={clsx(
+        'py-2.5 px-5 bg-gray-900 text-zinc-50 text-base text-center font-medium rounded',
+        !disabled && 'hover:bg-gray-800 active:bg-gray-950',
+        disabled && 'text-zinc-100',
+      )}
+    />
   );
 }

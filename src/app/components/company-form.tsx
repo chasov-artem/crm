@@ -31,48 +31,38 @@ export interface CompanyFormProps {
 export default function CompanyForm({ onSubmit }: CompanyFormProps) {
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
-      <Form className="flex flex-col gap-8 w-full max-w-4xl mx-auto">
-        <h2 className="text-2xl font-semibold text-gray-900">
-          Add new company
-        </h2>
-        <div className="flex gap-8">
-          <div className="flex flex-col flex-1 gap-6">
+      <Form className="flex flex-col gap-10">
+        <p className="mb-0.5 text-xl">Add new company</p>
+        <div className="flex gap-6">
+          <div className="flex flex-col flex-1 gap-5">
             <LogoUploader label="Logo" placeholder="Upload photo" />
             <InputField
               label="Status"
-              placeholder="Enter status"
+              placeholder="Status"
               name="status"
             />
             <InputField
               label="Country"
-              placeholder="Enter country"
+              placeholder="Country"
               name="country"
             />
           </div>
-          <div className="flex flex-col flex-1 gap-6">
-            <InputField
-              label="Name"
-              placeholder="Enter company name"
-              name="name"
-            />
+          <div className="flex flex-col flex-1 gap-5">
+            <InputField label="Name" placeholder="Name" name="name" />
             <InputField
               label="Category"
-              placeholder="Enter category"
+              placeholder="Category"
               name="category"
             />
             <InputField label="Joined date" type="date" name="date" />
             <InputField
               label="Description"
-              placeholder="Enter description"
+              placeholder="Description"
               name="description"
             />
           </div>
         </div>
-        <div className="flex justify-end mt-4">
-          <Button type="submit" className="px-8">
-            Add company
-          </Button>
-        </div>
+        <Button type="submit">Add company</Button>
       </Form>
     </Formik>
   );

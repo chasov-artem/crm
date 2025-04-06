@@ -15,23 +15,21 @@ export default function LogoUploader({
   ...rest
 }: LogoUploaderProps) {
   return (
-    <div className="flex flex-col gap-2">
-      {label && (
-        <p className="text-base text-gray-900 font-medium">{label}</p>
-      )}
+    <div className="flex gap-10 mb-3">
+      {label && <p className="text-base color-gray-900">{label}</p>}
       <label
         htmlFor={id}
-        className="flex flex-col items-center justify-center w-40 h-40 bg-white border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer hover:border-gray-400 transition-colors"
+        className="flex flex-col items-center justify-center w-40 h-40 bg-white border border-slate-900 border-dashed rounded-full cursor-pointer"
       >
         <Image
-          className="mb-2 opacity-50"
+          className="mb-1"
           width={48}
           height={48}
           src="/icons/upload.svg"
           alt="upload"
         />
         {placeholder && (
-          <p className="text-sm text-gray-500">{placeholder}</p>
+          <p className="text-base text-gray-500">{placeholder}</p>
         )}
         <input
           {...rest}
