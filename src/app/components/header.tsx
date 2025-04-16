@@ -18,6 +18,7 @@ export default function Header({ children }: HeaderProps) {
           height={44}
           src="/images/avatar.png"
           alt="avatar"
+          className="rounded-full"
         />
         <div>
           <p className="text-base	font-semibold text-gray-900">
