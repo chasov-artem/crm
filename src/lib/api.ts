@@ -54,21 +54,43 @@ export interface Promotion {
   avatar?: string;
 }
 
-const PROJECT_TOKEN = process.env.NEXT_PUBLIC_PROJECT_TOKEN;
+const buildUrl = (...paths: string[]) => {
+  const url = `/api/${paths.join('/')}`;
+  console.log('Building URL:', url);
+  return url;
+};
 
-const buildUrl = (...paths: string[]) =>
-  `https://${PROJECT_TOKEN}.mockapi.io/api/v1/${paths.join('/')}`;
+const stringifyQueryParams = (params: Record<string, string>) => {
+  const queryString = new URLSearchParams(params).toString();
+  console.log('Query params:', params);
+  return queryString;
+};
 
-const stringifyQueryParams = (params: Record<string, string>) =>
-  new URLSearchParams(params).toString();
+export const getApiUrl = (path: string) => {
+  if (typeof window === 'undefined') {
+    return `http://localhost:3000${path}`;
+  }
+  return path;
+};
 
 const sendRequest = async <T>(url: string, init?: RequestInit) => {
-  const res = await fetch(url, init);
+  const apiUrl = getApiUrl(url);
+  console.log('Sending request to:', apiUrl);
+  const res = await fetch(apiUrl, init);
+  console.log('Response status:', res.status);
+
+  if (res.status === 404) {
+    throw new Error('Resource not found');
+  }
   if (!res.ok) {
-    throw new Error(await res.text());
+    const errorText = await res.text();
+    console.error('Error response:', errorText);
+    throw new Error(errorText);
   }
 
-  return (await res.json()) as T;
+  const data = await res.json();
+  console.log('Response data:', data);
+  return data as T;
 };
 
 export const getSummaryStats = (init?: RequestInit) => {
@@ -94,16 +116,39 @@ export const getCompanies = (init?: RequestInit) => {
   return sendRequest<Company[]>(buildUrl('companies'), init);
 };
 
-export const getCompany = (id: string, init?: RequestInit) => {
-  return sendRequest<Company>(buildUrl('companies', id), init);
+export const getCompany = async (id: string, init?: RequestInit) => {
+  try {
+    console.log('Getting company with ID:', id);
+    const url = buildUrl('companies', id);
+    console.log('Company request URL:', url);
+    return await sendRequest<Company>(url, init);
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === 'Resource not found'
+    ) {
+      return null;
+    }
+    throw error;
+  }
 };
 
 export const getPromotions = async (
-  params: Record<string, string> = {},
+  params: Record<string, string | number> = {},
   init?: RequestInit,
 ) => {
-  return sendRequest<Promotion[]>(
-    `${buildUrl('promotions')}?${stringifyQueryParams(params)}`,
-    init,
-  );
+  try {
+    return await sendRequest<Promotion[]>(
+      `${buildUrl('promotions')}?${stringifyQueryParams(params as Record<string, string>)}`,
+      init,
+    );
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === 'Resource not found'
+    ) {
+      return [];
+    }
+    throw error;
+  }
 };
