@@ -6,7 +6,7 @@ import DashboardCard from '@/app/components/dashboard-card';
 
 // export interface PageProps {}
 
-export default async function Page() {
+export default async function Page({}) {
   const categories = await getCategories();
   const companies = await getCompanies();
 
