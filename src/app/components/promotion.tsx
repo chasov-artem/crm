@@ -1,36 +1,30 @@
-'use client';
-
 import React from 'react';
 import Image from 'next/image';
-import { Promotion as PromotionType } from '@/lib/api';
+import { Promotion } from '@/lib/api';
 
-interface PromotionProps {
-  promotion: PromotionType;
+export interface PromotionProps {
+  promotion: Promotion;
 }
 
 export default function Promotion({ promotion }: PromotionProps) {
   return (
-    <div className="flex flex-col gap-5 p-7 bg-gray-100 rounded">
-      <div className="relative w-full h-40 rounded bg-gray-200 overflow-hidden">
+    <div className="rounded overflow-hidden	bg-gray-100">
+      <div className="relative w-full h-40 bg-gray-300">
         {promotion.avatar && (
-          <Image
-            src={promotion.avatar}
-            alt={promotion.title}
-            width={400}
-            height={160}
-            className="object-cover w-full h-full"
-          />
+          <Image fill src={promotion.avatar} alt="promotion avatar" />
         )}
-      </div>
-      <div className="flex flex-col gap-2">
-        <h3 className="text-xl font-semibold">{promotion.title}</h3>
-        <p className="text-gray-600">{promotion.description}</p>
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-semibold text-blue-600">
-            {promotion.discount}%
-          </span>
-          <span className="text-sm text-gray-500">discount</span>
+        <div className="w-14 h-14 absolute top-0 left-px rounded-br-full bg-lime-200" />
+        <div className="w-14 h-14 absolute inset-0 py-3 pr-3 pl-0.5 rounded-br-full bg-gray-900">
+          <p className="text-center text-xs font-bold text-lime-200">{`-${promotion.discount}%`}</p>
         </div>
+      </div>
+      <div className="flex flex-col p-5 gap-3">
+        <p className="text-base font-semibold text-gray-900">
+          {promotion.title}
+        </p>
+        <p className="text-sm text-gray-900">
+          {promotion.description}
+        </p>
       </div>
     </div>
   );

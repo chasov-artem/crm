@@ -11,53 +11,19 @@ export interface CompanyInfoProps {
 }
 
 export default function CompanyInfo({ companyId }: CompanyInfoProps) {
-  console.log('CompanyInfo received companyId:', companyId);
-
-  const {
-    data: company,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['company', companyId],
-    queryFn: () => {
-      console.log('Fetching company with ID:', companyId);
-      return getCompany(companyId);
-    },
+  const { data: company } = useQuery({
+    queryKey: ['companies', companyId],
+    queryFn: () => getCompany(companyId),
     staleTime: 10 * 1000,
-    retry: 1,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
   });
 
-  console.log('Company data:', company);
-  console.log('Loading state:', isLoading);
-  console.log('Error state:', error);
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) {
-    console.error('Error loading company:', error);
-    return (
-      <div className="text-red-500">
-        Error loading company info:{' '}
-        {error instanceof Error ? error.message : 'Unknown error'}
-      </div>
-    );
-  }
-  if (!company) return <div>Company not found</div>;
-
+  if (!company) return null;
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col items-center p-7 gap-5 bg-gray-900 rounded">
-        <div className="relative w-20 h-20 rounded-full bg-blue-500 overflow-hidden">
+        <div className="w-20 h-20 rounded-full bg-blue-500">
           {company.avatar && (
-            <Image
-              src={company.avatar}
-              alt="company avatar"
-              sizes="80px"
-              style={{ objectFit: 'cover' }}
-              width={80}
-              height={80}
-            />
+            <Image fill src={company.avatar} alt="company avatar" />
           )}
         </div>
         <p className="pb text-base font-semibold text-white">

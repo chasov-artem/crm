@@ -54,43 +54,21 @@ export interface Promotion {
   avatar?: string;
 }
 
-const buildUrl = (...paths: string[]) => {
-  const url = `/api/${paths.join('/')}`;
-  console.log('Building URL:', url);
-  return url;
-};
+const PROJECT_TOKEN = process.env.NEXT_PUBLIC_PROJECT_TOKEN;
 
-const stringifyQueryParams = (params: Record<string, string>) => {
-  const queryString = new URLSearchParams(params).toString();
-  console.log('Query params:', params);
-  return queryString;
-};
+const buildUrl = (...paths: string[]) =>
+  `https://${PROJECT_TOKEN}.mockapi.io/api/v1/${paths.join('/')}`;
 
-export const getApiUrl = (path: string) => {
-  if (typeof window === 'undefined') {
-    return `http://localhost:3000${path}`;
-  }
-  return path;
-};
+const stringifyQueryParams = (params: Record<string, string>) =>
+  new URLSearchParams(params).toString();
 
 const sendRequest = async <T>(url: string, init?: RequestInit) => {
-  const apiUrl = getApiUrl(url);
-  console.log('Sending request to:', apiUrl);
-  const res = await fetch(apiUrl, init);
-  console.log('Response status:', res.status);
-
-  if (res.status === 404) {
-    throw new Error('Resource not found');
-  }
+  const res = await fetch(url, init);
   if (!res.ok) {
-    const errorText = await res.text();
-    console.error('Error response:', errorText);
-    throw new Error(errorText);
+    throw new Error(await res.text());
   }
 
-  const data = await res.json();
-  console.log('Response data:', data);
-  return data as T;
+  return (await res.json()) as T;
 };
 
 export const getSummaryStats = (init?: RequestInit) => {
@@ -116,39 +94,16 @@ export const getCompanies = (init?: RequestInit) => {
   return sendRequest<Company[]>(buildUrl('companies'), init);
 };
 
-export const getCompany = async (id: string, init?: RequestInit) => {
-  try {
-    console.log('Getting company with ID:', id);
-    const url = buildUrl('companies', id);
-    console.log('Company request URL:', url);
-    return await sendRequest<Company>(url, init);
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message === 'Resource not found'
-    ) {
-      return null;
-    }
-    throw error;
-  }
+export const getCompany = (id: string, init?: RequestInit) => {
+  return sendRequest<Company>(buildUrl('companies', id), init);
 };
 
 export const getPromotions = async (
-  params: Record<string, string | number> = {},
+  params: Record<string, string> = {},
   init?: RequestInit,
 ) => {
-  try {
-    return await sendRequest<Promotion[]>(
-      `${buildUrl('promotions')}?${stringifyQueryParams(params as Record<string, string>)}`,
-      init,
-    );
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message === 'Resource not found'
-    ) {
-      return [];
-    }
-    throw error;
-  }
+  return sendRequest<Promotion[]>(
+    `${buildUrl('promotions')}?${stringifyQueryParams(params)}`,
+    init,
+  );
 };
