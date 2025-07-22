@@ -1,5 +1,5 @@
 import React, { use } from 'react';
-import { Company, getCompany } from '@/lib/api';
+import { getCompany } from '@/lib/api';
 import Header from '@/app/components/header';
 
 export interface PageProps {
