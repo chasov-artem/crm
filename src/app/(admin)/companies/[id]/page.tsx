@@ -1,12 +1,13 @@
 'use client';
 
-import React, { use } from 'react';
+import React, { use, useState } from 'react';
 import { notFound } from 'next/navigation';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import { getCompany, getPromotions, getCompanies } from '@/lib/api';
+import { getCompany, getPromotions } from '@/lib/api';
 import getQueryClient from '@/lib/utils/getQueryClient';
 import CompanyInfo from '@/app/components/company-info';
 import CompanyPromotions from '@/app/components/company-promotions';
+import PromotionFormModal from '@/app/components/promotion-form-modal';
 
 export interface PageProps {
   params: Promise<{ id: string }>;
@@ -14,36 +15,25 @@ export interface PageProps {
 
 export default function Page({ params }: PageProps) {
   const { id } = use(params);
-  console.log('Page received company ID:', id);
   const queryClient = getQueryClient();
+  const [showModal, setShowModal] = useState(false);
 
   React.useEffect(() => {
     async function fetchData() {
       try {
-        console.log('Fetching initial data for company:', id);
-
-        // Отримуємо дані компанії
         const company = await getCompany(id, {
           cache: 'no-store',
         });
-        console.log('Received company data:', company);
-
-        // Отримуємо акції компанії
         const promotions = await getPromotions(
           { companyId: id },
           { cache: 'no-store' },
         );
-        console.log('Received promotions data:', promotions);
-
-        // Встановлюємо дані в кеш
         queryClient.setQueryData(['company', id], company);
         queryClient.setQueryData(
           ['promotions', { companyId: id }],
           promotions,
         );
-        console.log('Data cached successfully');
       } catch (error) {
-        console.error('Error fetching initial data:', error);
         if (
           error instanceof Error &&
           error.message === 'Resource not found'
@@ -53,7 +43,6 @@ export default function Page({ params }: PageProps) {
         throw error;
       }
     }
-
     fetchData();
   }, [id, queryClient]);
 
@@ -66,8 +55,19 @@ export default function Page({ params }: PageProps) {
           <CompanyInfo companyId={id} />
         </div>
         <div className="col-span-9">
-          <CompanyPromotions companyId={id} />
+          <CompanyPromotions
+            companyId={id}
+            onAdd={() => setShowModal(true)}
+          />
         </div>
+        {/* Модалка з формою */}
+        {showModal && (
+          <PromotionFormModal
+            companyId={id}
+            show={showModal}
+            onClose={() => setShowModal(false)}
+          />
+        )}
       </div>
     </HydrationBoundary>
   );
