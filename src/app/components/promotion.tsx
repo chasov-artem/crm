@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { Promotion } from '@/lib/api';
+import type { Promotion } from '@/lib/api';
 
 export interface PromotionProps {
   promotion: Promotion;
@@ -9,9 +9,19 @@ export interface PromotionProps {
 export default function Promotion({ promotion }: PromotionProps) {
   return (
     <div className="rounded overflow-hidden	bg-gray-100">
-      <div className="relative w-full h-40 bg-gray-300">
+      <div className="relative w-full h-40 bg-gray-300 flex items-center justify-center">
         {promotion.avatar && (
-          <Image fill src={promotion.avatar} alt="promotion avatar" />
+          <Image
+            src={promotion.avatar}
+            alt="promotion avatar"
+            width={320}
+            height={160}
+            style={{
+              objectFit: 'cover',
+              width: '100%',
+              height: '100%',
+            }}
+          />
         )}
         <div className="w-14 h-14 absolute top-0 left-px rounded-br-full bg-lime-200" />
         <div className="w-14 h-14 absolute inset-0 py-3 pr-3 pl-0.5 rounded-br-full bg-gray-900">
