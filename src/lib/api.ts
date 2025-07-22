@@ -107,3 +107,13 @@ export const getPromotions = async (
     init,
   );
 };
+
+export const createPromotion = async (
+  data: Omit<Promotion, 'id'>,
+) => {
+  return sendRequest<Promotion>(buildUrl('promotions'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+};
